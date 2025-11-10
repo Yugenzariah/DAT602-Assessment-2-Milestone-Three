@@ -33,9 +33,24 @@ namespace TheRaze
                 switch (status)
                 {
                     case "OK":
-                        MessageBox.Show("Login success.");
-                        new GameForm().Show();
-                        this.Hide();
+                        var playerInfo = _auth.GetPlayerInfo(user);
+                        if (playerInfo.HasValue)
+                        {
+                            Session.PlayerId = playerInfo.Value.playerId;
+                            Session.Username = playerInfo.Value.username;
+                            Session.IsAdmin = playerInfo.Value.isAdmin;
+
+                            MessageBox.Show($"Welcome back, {user}!");
+
+                            // Open Lobby
+                            var lobby = new LobbyForm();
+                            lobby.Show();
+                            this.Hide();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Error loading player information.");
+                        }
                         break;
                     case "LOCKED":
                         MessageBox.Show("Account locked. Contact admin.");

@@ -45,5 +45,26 @@ namespace TheRaze.Data
             cmd.Parameters.AddWithValue("@p_playerId", playerId);
             cmd.ExecuteNonQuery();
         }
+
+        public (uint playerId, string username, bool isAdmin, int highscore)? GetPlayerInfo(string username)
+        {
+            using var cn = Db.GetOpenConnection();
+            using var cmd = new MySqlCommand("sp_get_player_info", cn);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@p_username", username);
+
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                return (
+                    Convert.ToUInt32(reader["PlayerID"]),
+                    reader["Username"].ToString(),
+                    Convert.ToBoolean(reader["IsAdmin"]),
+                    Convert.ToInt32(reader["Highscore"])
+                );
+            }
+            return null;
+        }
     }
 }

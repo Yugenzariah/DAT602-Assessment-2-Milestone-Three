@@ -69,5 +69,25 @@ namespace TheRaze.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap e52fb07e65f66f9eaf34764b8a679c85 {
+            get {
+                object obj = ResourceManager.GetObject("e52fb07e65f66f9eaf34764b8a679c85", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap e52fb07e65f66f9eaf34764b8a679c851 {
+            get {
+                object obj = ResourceManager.GetObject("e52fb07e65f66f9eaf34764b8a679c851", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

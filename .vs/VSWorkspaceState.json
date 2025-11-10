@@ -4,8 +4,8 @@
     "\\TheRaze",
     "\\TheRaze\\TheRaze",
     "\\TheRaze\\TheRaze\\Data",
-    "\\TheRaze\\TheRaze\\Forms",
-    "\\TheRaze\\TheRaze\\Utils"
+    "\\TheRaze\\TheRaze\\Forms"
   ],
+  "SelectedNode": "\\TheRaze\\TheRaze\\Forms\\LoginForm.cs",
   "PreviewInSolutionExplorer": false
 }

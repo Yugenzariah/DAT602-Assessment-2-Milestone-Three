@@ -77,3 +77,6 @@ C:\Users\minit\Source\Repos\DAT602-Assessment-One-Milestone-1\TheRaze\TheRaze\ob
 C:\Users\minit\Source\Repos\DAT602-Assessment-One-Milestone-1\TheRaze\TheRaze\obj\Debug\net8.0-windows\TheRaze.genruntimeconfig.cache
 C:\Users\minit\Source\Repos\DAT602-Assessment-One-Milestone-1\TheRaze\TheRaze\obj\Debug\net8.0-windows\ref\TheRaze.dll
 C:\Users\minit\source\repos\DAT602-Assessment-One-Milestone-1\TheRaze\TheRaze\obj\Debug\net8.0-windows\TheRaze.Properties.Resources.resources
+C:\Users\minit\source\repos\DAT602-Assessment-One-Milestone-1\TheRaze\TheRaze\obj\Debug\net8.0-windows\TheRaze.Forms.LobbyForm.resources
+C:\Users\minit\source\repos\DAT602-Assessment-One-Milestone-1\TheRaze\TheRaze\obj\Debug\net8.0-windows\Interop.VBIDE.dll
+C:\Users\minit\source\repos\DAT602-Assessment-One-Milestone-1\TheRaze\TheRaze\obj\Debug\net8.0-windows\TheRaze.csproj.ResolveComReference.cache

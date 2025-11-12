@@ -26,21 +26,30 @@ namespace TheRaze.Forms
             {
                 if (!uint.TryParse(txtPlayerGameId.Text, out var pgId))
                 {
-                    MessageBox.Show("Enter a valid PlayerGameID (number).");
+                    MessageBox.Show("Enter a valid PlayerGameID.");
                     return;
                 }
                 if (!uint.TryParse(txtTargetTileId.Text, out var tileId))
                 {
-                    MessageBox.Show("Enter a valid TargetTileID (number).");
+                    MessageBox.Show("Enter a valid TargetTileID.");
                     return;
                 }
 
-                _game.MovePlayer(pgId, tileId);
-                MessageBox.Show("Moved.");
+                // Properly destructure the tuple
+                var (status, message) = _game.MovePlayer(pgId, tileId);
+
+                if (status == "SUCCESS")
+                {
+                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Move failed: " + ex.Message);
+                MessageBox.Show($"Move failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -50,21 +59,31 @@ namespace TheRaze.Forms
             {
                 if (!uint.TryParse(txtPlayerGameId.Text, out var pgId))
                 {
-                    MessageBox.Show("Enter a valid PlayerGameID (number).");
+                    MessageBox.Show("Enter a valid PlayerGameID.");
                     return;
                 }
                 if (!int.TryParse(txtDelta.Text, out var delta))
                 {
-                    MessageBox.Show("Enter a valid Score Δ (integer).");
+                    MessageBox.Show("Enter a valid Score Δ.");
                     return;
                 }
 
-                _game.AddScore(pgId, delta);
-                MessageBox.Show("Score updated.");
+                // Properly destructure the tuple (note 3 values)
+                var (status, message, newScore) = _game.AddScore(pgId, delta);
+
+                if (status == "SUCCESS")
+                {
+                    string scoreInfo = newScore.HasValue ? $"New Score: {newScore}" : "";
+                    MessageBox.Show($"{message}\n{scoreInfo}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Score update failed: " + ex.Message);
+                MessageBox.Show($"Score update failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -93,12 +112,22 @@ namespace TheRaze.Forms
                     MessageBox.Show("Enter a valid Quantity.");
                     return;
                 }
-                _game.PickupItem(pgId, itemId, qty);
-                MessageBox.Show("Item picked up successfully.");
+
+                // Properly destructure the tuple
+                var (status, message) = _game.PickupItem(pgId, itemId, qty);
+
+                if (status == "SUCCESS")
+                {
+                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Pickup failed: " + ex.Message);
+                MessageBox.Show($"Pickup failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -108,25 +137,35 @@ namespace TheRaze.Forms
             {
                 if (!uint.TryParse(txtResetGameId.Text, out var gameId))
                 {
-                    MessageBox.Show("Enter a valid Reset Game ID.");
+                    MessageBox.Show("Enter a valid GameID.");
                     return;
                 }
                 if (!int.TryParse(txtWidth.Text, out var width) || width <= 0)
                 {
-                    MessageBox.Show("Enter a valid Width (positive number).");
+                    MessageBox.Show("Enter a valid Width.");
                     return;
                 }
                 if (!int.TryParse(txtHeight.Text, out var height) || height <= 0)
                 {
-                    MessageBox.Show("Enter a valid Height (positive number).");
+                    MessageBox.Show("Enter a valid Height.");
                     return;
                 }
-                _game.ResetBoard(gameId, width, height);
-                MessageBox.Show("Board reset successfully.");
+
+                // Properly destructure the tuple
+                var (status, message) = _game.ResetBoard(gameId, width, height);
+
+                if (status == "SUCCESS")
+                {
+                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Reset board failed: " + ex.Message);
+                MessageBox.Show($"Reset board failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -141,20 +180,30 @@ namespace TheRaze.Forms
                 }
                 if (!uint.TryParse(txtPlaceItemId.Text, out var itemId))
                 {
-                    MessageBox.Show("Enter a valid Place Item ID.");
+                    MessageBox.Show("Enter a valid Item ID.");
                     return;
                 }
                 if (!short.TryParse(txtPlaceQty.Text, out var qty))
                 {
-                    MessageBox.Show("Enter a valid Place Qty.");
+                    MessageBox.Show("Enter a valid Quantity.");
                     return;
                 }
-                _game.PlaceItemOnTile(tileId, itemId, qty);
-                MessageBox.Show("Item placed on tile successfully.");
+
+                // Properly destructure the tuple
+                var (status, message) = _game.PlaceItemOnTile(tileId, itemId, qty);
+
+                if (status == "SUCCESS")
+                {
+                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Place item failed: " + ex.Message);
+                MessageBox.Show($"Place item failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

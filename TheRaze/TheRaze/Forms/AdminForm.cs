@@ -27,15 +27,25 @@ namespace TheRaze.Forms
             {
                 if (!uint.TryParse(txtGameId.Text, out var gameId))
                 {
-                    MessageBox.Show("Enter a valid GameID (number).");
+                    MessageBox.Show("Enter a valid GameID.");
                     return;
                 }
-                _admin.KillGame(gameId);
-                MessageBox.Show("Game killed.");
+
+                // Properly destructure the tuple
+                var (status, message) = _admin.KillGame(gameId);
+
+                if (status == "SUCCESS")
+                {
+                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Kill failed: " + ex.Message);
+                MessageBox.Show($"Kill failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -44,22 +54,32 @@ namespace TheRaze.Forms
             try
             {
                 var u = txtU.Text.Trim();
-                var e1 = txtE.Text.Trim();
+                var email = txtE.Text.Trim();
                 var p = txtP.Text;
                 var isAdmin = chkAdmin.Checked;
 
-                if (string.IsNullOrWhiteSpace(u) || string.IsNullOrWhiteSpace(e1) || string.IsNullOrEmpty(p))
+                if (string.IsNullOrWhiteSpace(u) || string.IsNullOrWhiteSpace(email) || string.IsNullOrEmpty(p))
                 {
                     MessageBox.Show("Please fill username, email, and password.");
                     return;
                 }
 
-                _admin.AddPlayer(u, e1, HashHelper.FakeHash(p), isAdmin);
-                MessageBox.Show("Player added.");
+                // Properly destructure the tuple (note 3 values)
+                var (status, message, playerId) = _admin.AddPlayer(u, email, HashHelper.FakeHash(p), isAdmin);
+
+                if (status == "SUCCESS")
+                {
+                    string idInfo = playerId.HasValue ? $"PlayerID: {playerId}" : "";
+                    MessageBox.Show($"{message}\n{idInfo}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Add failed: " + ex.Message);
+                MessageBox.Show($"Add failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -72,24 +92,34 @@ namespace TheRaze.Forms
                     MessageBox.Show("Enter a valid PlayerID.");
                     return;
                 }
+
                 var u = txtU2.Text.Trim();
-                var e2 = txtE2.Text.Trim();
-                var p2 = txtP2.Text;
+                var email = txtE2.Text.Trim();
+                var p = txtP2.Text;
                 var isAdmin = chkAdmin2.Checked;
                 var isLocked = chkLocked2.Checked;
 
-                if (string.IsNullOrWhiteSpace(u) || string.IsNullOrWhiteSpace(e2) || string.IsNullOrEmpty(p2))
+                if (string.IsNullOrWhiteSpace(u) || string.IsNullOrWhiteSpace(email) || string.IsNullOrEmpty(p))
                 {
                     MessageBox.Show("Please fill username, email, and password.");
                     return;
                 }
 
-                _admin.UpdatePlayer(playerId, u, e2, HashHelper.FakeHash(p2), isAdmin, isLocked);
-                MessageBox.Show("Player updated.");
+                // Properly destructure the tuple
+                var (status, message) = _admin.UpdatePlayer(playerId, u, email, HashHelper.FakeHash(p), isAdmin, isLocked);
+
+                if (status == "SUCCESS")
+                {
+                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Update failed: " + ex.Message);
+                MessageBox.Show($"Update failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -102,12 +132,22 @@ namespace TheRaze.Forms
                     MessageBox.Show("Enter a valid PlayerID.");
                     return;
                 }
-                _admin.DeletePlayer(playerId);
-                MessageBox.Show("Player deleted.");
+
+                // Properly destructure the tuple
+                var (status, message) = _admin.DeletePlayer(playerId);
+
+                if (status == "SUCCESS")
+                {
+                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Delete failed: " + ex.Message);
+                MessageBox.Show($"Delete failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

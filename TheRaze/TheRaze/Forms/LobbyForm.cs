@@ -85,39 +85,19 @@ namespace TheRaze.Forms
                 var selectedRow = dgvGames.SelectedRows[0];
                 var gameId = Convert.ToUInt32(selectedRow.Cells["GameID"].Value);
                 var gameName = selectedRow.Cells["Name"].Value.ToString();
-                var gameStatus = selectedRow.Cells["Status"].Value.ToString();
-
-                // Check if game is joinable
-                if (gameStatus == "Finished" || gameStatus == "Killed")
-                {
-                    MessageBox.Show($"Cannot join game '{gameName}' - it has ended.", "Game Ended");
-                    return;
-                }
 
                 lblStatus.Text = "Joining game...";
                 lblStatus.ForeColor = System.Drawing.Color.Blue;
 
-                var (status, playerGameId) = _lobby.JoinGame(Session.PlayerId.Value, gameId);
+                // Properly destructure the tuple
+                var (status, message, playerGameId) = _lobby.JoinGame(Session.PlayerId.Value, gameId);
 
-                if (status == "SUCCESS")
+                if (status == "SUCCESS" || status == "ALREADY_JOINED")
                 {
                     Session.CurrentGameId = gameId;
                     Session.CurrentPlayerGameId = playerGameId;
 
-                    MessageBox.Show($"Successfully joined '{gameName}'!", "Joined Game",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    // Open game board
-                    var gameBoard = new GameForm();
-                    gameBoard.Show();
-                    this.Hide();
-                }
-                else if (status == "ALREADY_JOINED")
-                {
-                    Session.CurrentGameId = gameId;
-                    Session.CurrentPlayerGameId = playerGameId;
-
-                    MessageBox.Show($"Resuming your game in '{gameName}'...", "Resume Game",
+                    MessageBox.Show(message, status == "SUCCESS" ? "Joined Game" : "Resume Game",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     var gameBoard = new GameForm();
@@ -128,16 +108,14 @@ namespace TheRaze.Forms
                 {
                     lblStatus.Text = "Failed to join game";
                     lblStatus.ForeColor = System.Drawing.Color.Red;
-                    MessageBox.Show(status, "Join Failed",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(message, "Join Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             catch (Exception ex)
             {
                 lblStatus.Text = "Error joining game";
                 lblStatus.ForeColor = System.Drawing.Color.Red;
-                MessageBox.Show($"Error joining game: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -151,7 +129,6 @@ namespace TheRaze.Forms
                     return;
                 }
 
-                // Prompt for game name
                 string gameName = Microsoft.VisualBasic.Interaction.InputBox(
                     "Enter game name:",
                     "Create New Game",
@@ -159,29 +136,34 @@ namespace TheRaze.Forms
 
                 if (string.IsNullOrWhiteSpace(gameName))
                 {
-                    return; // User cancelled
+                    return;
                 }
 
                 lblStatus.Text = "Creating game...";
                 lblStatus.ForeColor = System.Drawing.Color.Blue;
 
-                uint gameId = _lobby.CreateGame(gameName);
+                // Properly destructure the tuple
+                var (status, message, gameId) = _lobby.CreateGame(gameName);
 
-                lblStatus.Text = "Game created successfully!";
-                lblStatus.ForeColor = System.Drawing.Color.Green;
-
-                MessageBox.Show($"Game '{gameName}' created successfully!", "Game Created",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // Refresh the games list
-                LoadGames();
+                if (status == "SUCCESS" && gameId.HasValue)
+                {
+                    lblStatus.Text = "Game created successfully!";
+                    lblStatus.ForeColor = System.Drawing.Color.Green;
+                    MessageBox.Show(message, "Game Created", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadGames();
+                }
+                else
+                {
+                    lblStatus.Text = "Failed to create game";
+                    lblStatus.ForeColor = System.Drawing.Color.Red;
+                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
                 lblStatus.Text = "Error creating game";
                 lblStatus.ForeColor = System.Drawing.Color.Red;
-                MessageBox.Show($"Error creating game: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

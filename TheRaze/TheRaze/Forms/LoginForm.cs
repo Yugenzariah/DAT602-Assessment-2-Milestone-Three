@@ -18,61 +18,67 @@ namespace TheRaze
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            var user = txtUsername.Text.Trim();
+            var pass = txtPassword.Text;
+
+            if (string.IsNullOrWhiteSpace(user) || string.IsNullOrEmpty(pass))
+            {
+                MessageBox.Show("Please enter username and password.");
+                return;
+            }
+
             try
             {
-                var user = txtUsername.Text.Trim();
-                var pass = txtPassword.Text;
+                var hash = HashHelper.FakeHash(pass);
 
-                if (string.IsNullOrWhiteSpace(user))
-                {
-                    MessageBox.Show("Please enter a username.");
-                    return;
-                }
+                // Properly destructure the tuple
+                var (status, message, playerId) = _auth.TryLogin(user, hash);
 
-                var status = _auth.TryLogin(user, HashHelper.FakeHash(pass));
                 switch (status)
                 {
                     case "OK":
-                        var playerInfo = _auth.GetPlayerInfo(user);
-                        if (playerInfo.HasValue)
+                        if (playerId.HasValue)
                         {
-                            Session.PlayerId = playerInfo.Value.playerId;
-                            Session.Username = playerInfo.Value.username;
-                            Session.IsAdmin = playerInfo.Value.isAdmin;
+                            var playerInfo = _auth.GetPlayerInfo(user);
+                            if (playerInfo.HasValue)
+                            {
+                                Session.PlayerId = playerInfo.Value.playerId;
+                                Session.Username = playerInfo.Value.username;
+                                Session.IsAdmin = playerInfo.Value.isAdmin;
 
-                            MessageBox.Show($"Welcome back, {user}!");
+                                MessageBox.Show(message, "Login Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                            // Open Lobby
-                            var lobby = new LobbyForm();
-                            lobby.Show();
-                            this.Hide();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Error loading player information.");
+                                var lobby = new LobbyForm();
+                                lobby.Show();
+                                this.Hide();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Error loading player information.");
+                            }
                         }
                         break;
+
                     case "LOCKED":
-                        MessageBox.Show("Account locked. Contact admin.");
+                        MessageBox.Show(message, "Account Locked", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
+
                     case "BADPASS":
-                        MessageBox.Show("Incorrect password.");
+                        MessageBox.Show(message, "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
+
                     case "UNKNOWN":
-                        if (MessageBox.Show("User not found. Register now?", "Register",
-                                            MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            new RegisterForm(user).ShowDialog(this);
-                        }
+                        MessageBox.Show(message, "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         break;
+
                     default:
-                        MessageBox.Show("Unexpected status: " + status);
+                        MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Login failed: " + ex.Message);
+                MessageBox.Show($"Login error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

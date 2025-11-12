@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Data;
 
 namespace TheRaze.Data
 {
     public class LobbyDao
     {
+        /// <summary>
+        /// Gets list of all active games (read-only query).
+        /// </summary>
         public DataTable GetGamesList()
         {
             using var cn = Db.GetOpenConnection();
-            using var cmd = new MySqlCommand("sp_get_games_list", cn);
+            using var cmd = new MySqlCommand("store_procedure_get_games_list", cn);
             cmd.CommandType = CommandType.StoredProcedure;
 
             var adapter = new MySqlDataAdapter(cmd);
@@ -22,48 +21,65 @@ namespace TheRaze.Data
             return dt;
         }
 
-        public (string status, uint? playerGameId) JoinGame(uint playerId, uint gameId)
+        /// <summary>
+        /// Player joins a game or resumes if already joined.
+        /// </summary>
+        public (string status, string message, uint? playerGameId) JoinGame(uint playerId, uint gameId)
         {
             using var cn = Db.GetOpenConnection();
-            using var cmd = new MySqlCommand("sp_join_game", cn);
+            using var cmd = new MySqlCommand("store_procedure_join_game", cn);
             cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.AddWithValue("@p_playerId", playerId);
             cmd.Parameters.AddWithValue("@p_gameId", gameId);
 
-            var statusParam = new MySqlParameter("@p_status", MySqlDbType.VarChar, 50)
-            { Direction = ParameterDirection.Output };
-            var pgIdParam = new MySqlParameter("@p_playerGameId", MySqlDbType.UInt32)
-            { Direction = ParameterDirection.Output };
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                string status = reader["Status"].ToString();
+                string message = reader["Message"].ToString();
+                uint? playerGameId = null;
 
-            cmd.Parameters.Add(statusParam);
-            cmd.Parameters.Add(pgIdParam);
+                // PlayerGameID exists for both SUCCESS and ALREADY_JOINED
+                if (reader["PlayerGameID"] != DBNull.Value)
+                {
+                    playerGameId = Convert.ToUInt32(reader["PlayerGameID"]);
+                }
 
-            cmd.ExecuteNonQuery();
+                return (status, message, playerGameId);
+            }
 
-            string status = statusParam.Value?.ToString() ?? "ERROR: Unknown";
-            uint? playerGameId = pgIdParam.Value != DBNull.Value
-                ? Convert.ToUInt32(pgIdParam.Value)
-                : null;
-
-            return (status, playerGameId);
+            return ("ERROR", "No response from database", null);
         }
 
-        public uint CreateGame(string gameName)
+        /// <summary>
+        /// Creates a new game with a board.
+        /// </summary>
+        public (string status, string message, uint? gameId) CreateGame(string gameName)
         {
             using var cn = Db.GetOpenConnection();
-            using var cmd = new MySqlCommand("sp_create_game", cn);
+            using var cmd = new MySqlCommand("store_procedure_create_game", cn);
             cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.AddWithValue("@p_gameName", gameName);
 
-            var gameIdParam = new MySqlParameter("@p_gameId", MySqlDbType.UInt32)
-            { Direction = ParameterDirection.Output };
-            cmd.Parameters.Add(gameIdParam);
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                string status = reader["Status"].ToString();
+                string message = reader["Message"].ToString();
+                uint? gameId = null;
 
-            cmd.ExecuteNonQuery();
+                // GameID only exists when status is SUCCESS
+                if (status == "SUCCESS" && reader["GameID"] != DBNull.Value)
+                {
+                    gameId = Convert.ToUInt32(reader["GameID"]);
+                }
 
-            return Convert.ToUInt32(gameIdParam.Value);
+                return (status, message, gameId);
+            }
+
+            return ("ERROR", "No response from database", null);
         }
     }
 }

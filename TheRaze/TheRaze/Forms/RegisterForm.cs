@@ -1,13 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System;
 using System.Windows.Forms;
 using TheRaze.Data;
 using TheRaze.Utils;
@@ -33,29 +24,108 @@ namespace TheRaze.Forms
         {
             try
             {
+                // Get and trim input values
                 var user = txtUsername.Text.Trim();
                 var email = txtEmail.Text.Trim();
                 var pass = txtPassword.Text;
 
-                if (string.IsNullOrWhiteSpace(user) || string.IsNullOrWhiteSpace(email) || string.IsNullOrEmpty(pass))
+                // Input validation
+                if (string.IsNullOrWhiteSpace(user))
                 {
-                    MessageBox.Show("Please fill all fields.");
+                    MessageBox.Show("Please enter a username.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtUsername.Focus();
                     return;
                 }
 
-                _auth.Register(user, email, HashHelper.FakeHash(pass));
-                MessageBox.Show("Registered. You can now login.");
-                this.Close();
+                if (user.Length < 3)
+                {
+                    MessageBox.Show("Username must be at least 3 characters long.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtUsername.Focus();
+                    return;
+                }
+
+                if (user.Length > 50)
+                {
+                    MessageBox.Show("Username must be 50 characters or less.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtUsername.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    MessageBox.Show("Please enter an email address.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtEmail.Focus();
+                    return;
+                }
+
+                if (!email.Contains("@") || !email.Contains("."))
+                {
+                    MessageBox.Show("Please enter a valid email address.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtEmail.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(pass))
+                {
+                    MessageBox.Show("Please enter a password.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtPassword.Focus();
+                    return;
+                }
+
+                if (pass.Length < 6)
+                {
+                    MessageBox.Show("Password must be at least 6 characters long.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtPassword.Focus();
+                    return;
+                }
+
+                // Hash password and register
+                var hash = HashHelper.FakeHash(pass);
+                var (status, message, playerId) = _auth.Register(user, email, hash);
+
+                if (status == "SUCCESS")
+                {
+                    MessageBox.Show($"{message}\n\nYou can now login with your credentials.",
+                        "Registration Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show(message, "Registration Failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"Database connection error: {ex.Message}\n\nPlease ensure MySQL is running.",
+                    "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Registration failed: " + ex.Message);
+                MessageBox.Show($"Registration failed:\n{ex.Message}\n\nPlease try again.",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            try
+            {
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                // Log unexpected errors but still close
+                System.Diagnostics.Debug.WriteLine($"Error closing form: {ex.Message}");
+                this.Close();
+            }
         }
     }
 }

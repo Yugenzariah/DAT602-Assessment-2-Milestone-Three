@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TheRaze.Data;
 using TheRaze.Utils;
@@ -25,27 +18,49 @@ namespace TheRaze.Forms
         {
             try
             {
+                // Input validation
                 if (!uint.TryParse(txtGameId.Text, out var gameId))
                 {
-                    MessageBox.Show("Enter a valid GameID.");
+                    MessageBox.Show("Please enter a valid Game ID (positive number).", "Invalid Input",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtGameId.Focus();
                     return;
                 }
 
-                // Properly destructure the tuple
+                // Confirm action
+                var confirm = MessageBox.Show(
+                    $"Are you sure you want to kill game {gameId}?\n\nThis will remove all players from the game.",
+                    "Confirm Kill Game",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (confirm != DialogResult.Yes)
+                    return;
+
+                // Execute kill game
                 var (status, message) = _admin.KillGame(gameId);
 
                 if (status == "SUCCESS")
                 {
-                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(message, "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txtGameId.Clear();
                 }
                 else
                 {
-                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(message, "Failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"Database connection error: {ex.Message}", "Connection Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Kill failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Kill game failed: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -53,33 +68,91 @@ namespace TheRaze.Forms
         {
             try
             {
+                // Get and validate input
                 var u = txtU.Text.Trim();
                 var email = txtE.Text.Trim();
                 var p = txtP.Text;
                 var isAdmin = chkAdmin.Checked;
 
-                if (string.IsNullOrWhiteSpace(u) || string.IsNullOrWhiteSpace(email) || string.IsNullOrEmpty(p))
+                // Input validation
+                if (string.IsNullOrWhiteSpace(u))
                 {
-                    MessageBox.Show("Please fill username, email, and password.");
+                    MessageBox.Show("Please enter a username.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtU.Focus();
                     return;
                 }
 
-                // Properly destructure the tuple (note 3 values)
+                if (u.Length < 3)
+                {
+                    MessageBox.Show("Username must be at least 3 characters.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtU.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    MessageBox.Show("Please enter an email address.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtE.Focus();
+                    return;
+                }
+
+                if (!email.Contains("@"))
+                {
+                    MessageBox.Show("Please enter a valid email address.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtE.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(p))
+                {
+                    MessageBox.Show("Please enter a password.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtP.Focus();
+                    return;
+                }
+
+                if (p.Length < 6)
+                {
+                    MessageBox.Show("Password must be at least 6 characters.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtP.Focus();
+                    return;
+                }
+
+                // Execute add player
                 var (status, message, playerId) = _admin.AddPlayer(u, email, HashHelper.FakeHash(p), isAdmin);
 
                 if (status == "SUCCESS")
                 {
-                    string idInfo = playerId.HasValue ? $"PlayerID: {playerId}" : "";
-                    MessageBox.Show($"{message}\n{idInfo}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    string idInfo = playerId.HasValue ? $"\nPlayer ID: {playerId}" : "";
+                    MessageBox.Show($"{message}{idInfo}", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Clear form
+                    txtU.Clear();
+                    txtE.Clear();
+                    txtP.Clear();
+                    chkAdmin.Checked = false;
                 }
                 else
                 {
-                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(message, "Failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"Database connection error: {ex.Message}", "Connection Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Add failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Add player failed: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -87,39 +160,78 @@ namespace TheRaze.Forms
         {
             try
             {
+                // Validate player ID
                 if (!uint.TryParse(txtPlayerId.Text, out var playerId))
                 {
-                    MessageBox.Show("Enter a valid PlayerID.");
+                    MessageBox.Show("Please enter a valid Player ID (positive number).", "Invalid Input",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtPlayerId.Focus();
                     return;
                 }
 
+                // Get and validate other inputs
                 var u = txtU2.Text.Trim();
                 var email = txtE2.Text.Trim();
                 var p = txtP2.Text;
                 var isAdmin = chkAdmin2.Checked;
                 var isLocked = chkLocked2.Checked;
 
-                if (string.IsNullOrWhiteSpace(u) || string.IsNullOrWhiteSpace(email) || string.IsNullOrEmpty(p))
+                // Input validation
+                if (string.IsNullOrWhiteSpace(u))
                 {
-                    MessageBox.Show("Please fill username, email, and password.");
+                    MessageBox.Show("Please enter a username.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtU2.Focus();
                     return;
                 }
 
-                // Properly destructure the tuple
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    MessageBox.Show("Please enter an email address.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtE2.Focus();
+                    return;
+                }
+
+                if (!email.Contains("@"))
+                {
+                    MessageBox.Show("Please enter a valid email address.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtE2.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(p))
+                {
+                    MessageBox.Show("Please enter a password.", "Validation Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtP2.Focus();
+                    return;
+                }
+
+                // Execute update
                 var (status, message) = _admin.UpdatePlayer(playerId, u, email, HashHelper.FakeHash(p), isAdmin, isLocked);
 
                 if (status == "SUCCESS")
                 {
-                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(message, "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(message, "Failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"Database connection error: {ex.Message}", "Connection Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Update failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Update player failed: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -127,27 +239,49 @@ namespace TheRaze.Forms
         {
             try
             {
+                // Validate player ID
                 if (!uint.TryParse(txtPlayerIdDel.Text, out var playerId))
                 {
-                    MessageBox.Show("Enter a valid PlayerID.");
+                    MessageBox.Show("Please enter a valid Player ID (positive number).", "Invalid Input",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtPlayerIdDel.Focus();
                     return;
                 }
 
-                // Properly destructure the tuple
+                // Confirm deletion
+                var confirm = MessageBox.Show(
+                    $"Are you sure you want to delete player {playerId}?\n\nThis action cannot be undone.",
+                    "Confirm Delete Player",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (confirm != DialogResult.Yes)
+                    return;
+
+                // Execute delete
                 var (status, message) = _admin.DeletePlayer(playerId);
 
                 if (status == "SUCCESS")
                 {
-                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(message, "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txtPlayerIdDel.Clear();
                 }
                 else
                 {
-                    MessageBox.Show(message, "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(message, "Failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"Database connection error: {ex.Message}", "Connection Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Delete failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Delete player failed: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

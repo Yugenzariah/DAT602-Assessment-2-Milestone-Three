@@ -2,15 +2,8 @@
 {
     partial class GameForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,413 +15,257 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            txtPlayerGameId = new TextBox();
-            label2 = new Label();
-            label3 = new Label();
-            txtTargetTileId = new TextBox();
-            btnMove = new Button();
-            txtDelta = new TextBox();
-            label4 = new Label();
-            btnAddScore = new Button();
-            btnAdmin = new Button();
-            label5 = new Label();
-            txtItemId = new TextBox();
-            txtQuantity = new TextBox();
-            label6 = new Label();
-            btnPickup = new Button();
-            label7 = new Label();
-            label8 = new Label();
-            label9 = new Label();
-            txtResetGameId = new TextBox();
-            txtWidth = new TextBox();
-            txtHeight = new TextBox();
-            btnResetBoard = new Button();
-            label10 = new Label();
-            txtPlaceTileId = new TextBox();
-            txtPlaceItemId = new TextBox();
-            label11 = new Label();
-            label12 = new Label();
-            txtPlaceQty = new TextBox();
-            btnPlaceItem = new Button();
+            pnlGameBoard = new Panel();
+            grpPlayerInfo = new GroupBox();
+            chkIsYourTurn = new CheckBox();
+            lblPosition = new Label();
+            lblHP = new Label();
+            lblScore = new Label();
+            lblPlayerName = new Label();
+            grpCurrentTile = new GroupBox();
+            btnPickupItem = new Button();
+            lstTileItems = new ListBox();
+            lblTileInfo = new Label();
+            grpInventory = new GroupBox();
+            lstInventory = new ListBox();
+            btnRefresh = new Button();
+            btnLeaveGame = new Button();
+            lblStatus = new Label();
             btnDeleteAccount = new Button();
-            txtPlayerIdToDelete = new TextBox();
-            label13 = new Label();
+            btnAdmin = new Button();
+            grpPlayerInfo.SuspendLayout();
+            grpCurrentTile.SuspendLayout();
+            grpInventory.SuspendLayout();
             SuspendLayout();
             // 
-            // label1
+            // pnlGameBoard
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(343, 12);
-            label1.Name = "label1";
-            label1.Size = new Size(206, 32);
-            label1.TabIndex = 0;
-            label1.Text = "Gameplay (TEST)";
+            pnlGameBoard.BorderStyle = BorderStyle.FixedSingle;
+            pnlGameBoard.Location = new Point(20, 60);
+            pnlGameBoard.Name = "pnlGameBoard";
+            pnlGameBoard.Size = new Size(600, 600);
+            pnlGameBoard.TabIndex = 0;
             // 
-            // txtPlayerGameId
+            // grpPlayerInfo
             // 
-            txtPlayerGameId.Location = new Point(12, 98);
-            txtPlayerGameId.Margin = new Padding(3, 4, 3, 4);
-            txtPlayerGameId.Name = "txtPlayerGameId";
-            txtPlayerGameId.Size = new Size(114, 27);
-            txtPlayerGameId.TabIndex = 1;
+            grpPlayerInfo.Controls.Add(chkIsYourTurn);
+            grpPlayerInfo.Controls.Add(lblPosition);
+            grpPlayerInfo.Controls.Add(lblHP);
+            grpPlayerInfo.Controls.Add(lblScore);
+            grpPlayerInfo.Controls.Add(lblPlayerName);
+            grpPlayerInfo.Location = new Point(640, 60);
+            grpPlayerInfo.Name = "grpPlayerInfo";
+            grpPlayerInfo.Size = new Size(320, 200);
+            grpPlayerInfo.TabIndex = 1;
+            grpPlayerInfo.TabStop = false;
+            grpPlayerInfo.Text = "Player Info";
             // 
-            // label2
+            // chkIsYourTurn
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(12, 74);
-            label2.Name = "label2";
-            label2.Size = new Size(111, 20);
-            label2.TabIndex = 2;
-            label2.Text = "Player Game ID";
+            chkIsYourTurn.AutoSize = true;
+            chkIsYourTurn.Enabled = false;
+            chkIsYourTurn.Location = new Point(10, 150);
+            chkIsYourTurn.Name = "chkIsYourTurn";
+            chkIsYourTurn.Size = new Size(93, 24);
+            chkIsYourTurn.TabIndex = 4;
+            chkIsYourTurn.Text = "Your Turn";
+            chkIsYourTurn.UseVisualStyleBackColor = true;
             // 
-            // label3
+            // lblPosition
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(726, 92);
-            label3.Name = "label3";
-            label3.Size = new Size(97, 20);
-            label3.TabIndex = 3;
-            label3.Text = "Target Tile ID";
+            lblPosition.AutoSize = true;
+            lblPosition.Location = new Point(10, 120);
+            lblPosition.Name = "lblPosition";
+            lblPosition.Size = new Size(101, 20);
+            lblPosition.TabIndex = 3;
+            lblPosition.Text = "Position: (0, 0)";
             // 
-            // txtTargetTileId
+            // lblHP
             // 
-            txtTargetTileId.Location = new Point(726, 116);
-            txtTargetTileId.Margin = new Padding(3, 4, 3, 4);
-            txtTargetTileId.Name = "txtTargetTileId";
-            txtTargetTileId.Size = new Size(114, 27);
-            txtTargetTileId.TabIndex = 4;
+            lblHP.AutoSize = true;
+            lblHP.Location = new Point(10, 90);
+            lblHP.Name = "lblHP";
+            lblHP.Size = new Size(58, 20);
+            lblHP.TabIndex = 2;
+            lblHP.Text = "HP: 100";
             // 
-            // btnMove
+            // lblScore
             // 
-            btnMove.Location = new Point(726, 185);
-            btnMove.Margin = new Padding(3, 4, 3, 4);
-            btnMove.Name = "btnMove";
-            btnMove.Size = new Size(86, 31);
-            btnMove.TabIndex = 5;
-            btnMove.Text = "Move Player";
-            btnMove.UseVisualStyleBackColor = true;
-            btnMove.Click += btnMove_Click;
+            lblScore.AutoSize = true;
+            lblScore.Location = new Point(10, 60);
+            lblScore.Name = "lblScore";
+            lblScore.Size = new Size(62, 20);
+            lblScore.TabIndex = 1;
+            lblScore.Text = "Score: 0";
             // 
-            // txtDelta
+            // lblPlayerName
             // 
-            txtDelta.Location = new Point(726, 269);
-            txtDelta.Margin = new Padding(3, 4, 3, 4);
-            txtDelta.Name = "txtDelta";
-            txtDelta.Size = new Size(114, 27);
-            txtDelta.TabIndex = 6;
+            lblPlayerName.AutoSize = true;
+            lblPlayerName.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblPlayerName.Location = new Point(10, 30);
+            lblPlayerName.Name = "lblPlayerName";
+            lblPlayerName.Size = new Size(58, 20);
+            lblPlayerName.TabIndex = 0;
+            lblPlayerName.Text = "Player:";
             // 
-            // label4
+            // grpCurrentTile
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(726, 245);
-            label4.Name = "label4";
-            label4.Size = new Size(46, 20);
-            label4.TabIndex = 7;
-            label4.Text = "Score";
+            grpCurrentTile.Controls.Add(btnPickupItem);
+            grpCurrentTile.Controls.Add(lstTileItems);
+            grpCurrentTile.Controls.Add(lblTileInfo);
+            grpCurrentTile.Location = new Point(640, 280);
+            grpCurrentTile.Name = "grpCurrentTile";
+            grpCurrentTile.Size = new Size(320, 200);
+            grpCurrentTile.TabIndex = 2;
+            grpCurrentTile.TabStop = false;
+            grpCurrentTile.Text = "Current Tile";
             // 
-            // btnAddScore
+            // btnPickupItem
             // 
-            btnAddScore.Location = new Point(681, 332);
-            btnAddScore.Margin = new Padding(3, 4, 3, 4);
-            btnAddScore.Name = "btnAddScore";
-            btnAddScore.Size = new Size(86, 31);
-            btnAddScore.TabIndex = 8;
-            btnAddScore.Text = "Add Score";
-            btnAddScore.UseVisualStyleBackColor = true;
-            btnAddScore.Click += btnAddScore_Click;
+            btnPickupItem.Location = new Point(10, 150);
+            btnPickupItem.Name = "btnPickupItem";
+            btnPickupItem.Size = new Size(140, 35);
+            btnPickupItem.TabIndex = 2;
+            btnPickupItem.Text = "Pick Up Item";
+            btnPickupItem.UseVisualStyleBackColor = true;
+            btnPickupItem.Click += btnPickupItem_Click;
             // 
-            // btnAdmin
+            // lstTileItems
             // 
-            btnAdmin.Location = new Point(785, 332);
-            btnAdmin.Margin = new Padding(3, 4, 3, 4);
-            btnAdmin.Name = "btnAdmin";
-            btnAdmin.Size = new Size(86, 31);
-            btnAdmin.TabIndex = 9;
-            btnAdmin.Text = "Admin";
-            btnAdmin.UseVisualStyleBackColor = true;
-            btnAdmin.Click += btnAdmin_Click;
+            lstTileItems.FormattingEnabled = true;
+            lstTileItems.ItemHeight = 20;
+            lstTileItems.Location = new Point(10, 60);
+            lstTileItems.Name = "lstTileItems";
+            lstTileItems.Size = new Size(290, 84);
+            lstTileItems.TabIndex = 1;
             // 
-            // label5
+            // lblTileInfo
             // 
-            label5.AutoSize = true;
-            label5.Location = new Point(12, 139);
-            label5.Name = "label5";
-            label5.Size = new Size(61, 20);
-            label5.TabIndex = 10;
-            label5.Text = "Item ID:";
+            lblTileInfo.AutoSize = true;
+            lblTileInfo.Location = new Point(10, 30);
+            lblTileInfo.Name = "lblTileInfo";
+            lblTileInfo.Size = new Size(112, 20);
+            lblTileInfo.TabIndex = 0;
+            lblTileInfo.Text = "Tile Type: Floor";
             // 
-            // txtItemId
+            // grpInventory
             // 
-            txtItemId.Location = new Point(12, 163);
-            txtItemId.Margin = new Padding(3, 4, 3, 4);
-            txtItemId.Name = "txtItemId";
-            txtItemId.Size = new Size(114, 27);
-            txtItemId.TabIndex = 11;
+            grpInventory.Controls.Add(lstInventory);
+            grpInventory.Location = new Point(640, 500);
+            grpInventory.Name = "grpInventory";
+            grpInventory.Size = new Size(320, 160);
+            grpInventory.TabIndex = 3;
+            grpInventory.TabStop = false;
+            grpInventory.Text = "Inventory";
             // 
-            // txtQuantity
+            // lstInventory
             // 
-            txtQuantity.Location = new Point(12, 220);
-            txtQuantity.Margin = new Padding(3, 4, 3, 4);
-            txtQuantity.Name = "txtQuantity";
-            txtQuantity.Size = new Size(114, 27);
-            txtQuantity.TabIndex = 13;
+            lstInventory.FormattingEnabled = true;
+            lstInventory.ItemHeight = 20;
+            lstInventory.Location = new Point(10, 30);
+            lstInventory.Name = "lstInventory";
+            lstInventory.Size = new Size(290, 124);
+            lstInventory.TabIndex = 0;
             // 
-            // label6
+            // btnRefresh
             // 
-            label6.AutoSize = true;
-            label6.Location = new Point(12, 196);
-            label6.Name = "label6";
-            label6.Size = new Size(68, 20);
-            label6.TabIndex = 12;
-            label6.Text = "Quantity:";
+            btnRefresh.Location = new Point(20, 680);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(120, 40);
+            btnRefresh.TabIndex = 4;
+            btnRefresh.Text = "Refresh Board";
+            btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += btnRefresh_Click;
             // 
-            // btnPickup
+            // btnLeaveGame
             // 
-            btnPickup.Location = new Point(12, 255);
-            btnPickup.Margin = new Padding(3, 4, 3, 4);
-            btnPickup.Name = "btnPickup";
-            btnPickup.Size = new Size(114, 31);
-            btnPickup.TabIndex = 14;
-            btnPickup.Text = "Pickup Item";
-            btnPickup.UseVisualStyleBackColor = true;
-            btnPickup.Click += btnPickup_Click;
+            btnLeaveGame.Location = new Point(500, 680);
+            btnLeaveGame.Name = "btnLeaveGame";
+            btnLeaveGame.Size = new Size(120, 40);
+            btnLeaveGame.TabIndex = 5;
+            btnLeaveGame.Text = "Leave Game";
+            btnLeaveGame.UseVisualStyleBackColor = true;
+            btnLeaveGame.Click += btnLeaveGame_Click;
             // 
-            // label7
+            // lblStatus
             // 
-            label7.AutoSize = true;
-            label7.Location = new Point(200, 76);
-            label7.Name = "label7";
-            label7.Size = new Size(110, 20);
-            label7.TabIndex = 15;
-            label7.Text = "Reset Game ID:";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(200, 132);
-            label8.Name = "label8";
-            label8.Size = new Size(52, 20);
-            label8.TabIndex = 16;
-            label8.Text = "Width:";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new Point(200, 187);
-            label9.Name = "label9";
-            label9.Size = new Size(57, 20);
-            label9.TabIndex = 17;
-            label9.Text = "Height:";
-            // 
-            // txtResetGameId
-            // 
-            txtResetGameId.Location = new Point(200, 101);
-            txtResetGameId.Margin = new Padding(3, 4, 3, 4);
-            txtResetGameId.Name = "txtResetGameId";
-            txtResetGameId.Size = new Size(114, 27);
-            txtResetGameId.TabIndex = 18;
-            // 
-            // txtWidth
-            // 
-            txtWidth.Location = new Point(200, 156);
-            txtWidth.Margin = new Padding(3, 4, 3, 4);
-            txtWidth.Name = "txtWidth";
-            txtWidth.Size = new Size(114, 27);
-            txtWidth.TabIndex = 19;
-            // 
-            // txtHeight
-            // 
-            txtHeight.Location = new Point(200, 211);
-            txtHeight.Margin = new Padding(3, 4, 3, 4);
-            txtHeight.Name = "txtHeight";
-            txtHeight.Size = new Size(114, 27);
-            txtHeight.TabIndex = 20;
-            // 
-            // btnResetBoard
-            // 
-            btnResetBoard.Location = new Point(200, 246);
-            btnResetBoard.Margin = new Padding(3, 4, 3, 4);
-            btnResetBoard.Name = "btnResetBoard";
-            btnResetBoard.Size = new Size(114, 31);
-            btnResetBoard.TabIndex = 21;
-            btnResetBoard.Text = "Reset Board";
-            btnResetBoard.UseVisualStyleBackColor = true;
-            btnResetBoard.Click += btnResetBoard_Click;
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Location = new Point(379, 76);
-            label10.Name = "label10";
-            label10.Size = new Size(55, 20);
-            label10.TabIndex = 22;
-            label10.Text = "Tile ID:";
-            // 
-            // txtPlaceTileId
-            // 
-            txtPlaceTileId.Location = new Point(379, 98);
-            txtPlaceTileId.Margin = new Padding(3, 4, 3, 4);
-            txtPlaceTileId.Name = "txtPlaceTileId";
-            txtPlaceTileId.Size = new Size(114, 27);
-            txtPlaceTileId.TabIndex = 23;
-            // 
-            // txtPlaceItemId
-            // 
-            txtPlaceItemId.Location = new Point(379, 156);
-            txtPlaceItemId.Margin = new Padding(3, 4, 3, 4);
-            txtPlaceItemId.Name = "txtPlaceItemId";
-            txtPlaceItemId.Size = new Size(114, 27);
-            txtPlaceItemId.TabIndex = 24;
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new Point(379, 132);
-            label11.Name = "label11";
-            label11.Size = new Size(100, 20);
-            label11.TabIndex = 25;
-            label11.Text = "Place Item ID:";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(379, 187);
-            label12.Name = "label12";
-            label12.Size = new Size(74, 20);
-            label12.TabIndex = 26;
-            label12.Text = "Place Qty:";
-            // 
-            // txtPlaceQty
-            // 
-            txtPlaceQty.Location = new Point(379, 211);
-            txtPlaceQty.Margin = new Padding(3, 4, 3, 4);
-            txtPlaceQty.Name = "txtPlaceQty";
-            txtPlaceQty.Size = new Size(114, 27);
-            txtPlaceQty.TabIndex = 27;
-            // 
-            // btnPlaceItem
-            // 
-            btnPlaceItem.Location = new Point(379, 255);
-            btnPlaceItem.Margin = new Padding(3, 4, 3, 4);
-            btnPlaceItem.Name = "btnPlaceItem";
-            btnPlaceItem.Size = new Size(114, 31);
-            btnPlaceItem.TabIndex = 28;
-            btnPlaceItem.Text = "Place Item";
-            btnPlaceItem.UseVisualStyleBackColor = true;
-            btnPlaceItem.Click += btnPlaceItem_Click;
+            lblStatus.AutoSize = true;
+            lblStatus.ForeColor = Color.Blue;
+            lblStatus.Location = new Point(150, 690);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(0, 20);
+            lblStatus.TabIndex = 6;
             // 
             // btnDeleteAccount
             // 
-            btnDeleteAccount.Location = new Point(12, 412);
+            btnDeleteAccount.BackColor = Color.IndianRed;
+            btnDeleteAccount.ForeColor = Color.White;
+            btnDeleteAccount.Location = new Point(840, 680);
             btnDeleteAccount.Name = "btnDeleteAccount";
-            btnDeleteAccount.Size = new Size(157, 29);
-            btnDeleteAccount.TabIndex = 29;
-            btnDeleteAccount.Text = "Delete My Account";
-            btnDeleteAccount.UseVisualStyleBackColor = true;
+            btnDeleteAccount.Size = new Size(120, 40);
+            btnDeleteAccount.TabIndex = 7;
+            btnDeleteAccount.Text = "Delete Account";
+            btnDeleteAccount.UseVisualStyleBackColor = false;
             btnDeleteAccount.Click += btnDeleteAccount_Click;
             // 
-            // txtPlayerIdToDelete
+            // btnAdmin
             // 
-            txtPlayerIdToDelete.Location = new Point(12, 378);
-            txtPlayerIdToDelete.Margin = new Padding(3, 4, 3, 4);
-            txtPlayerIdToDelete.Name = "txtPlayerIdToDelete";
-            txtPlayerIdToDelete.Size = new Size(157, 27);
-            txtPlayerIdToDelete.TabIndex = 30;
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Location = new Point(12, 354);
-            label13.Name = "label13";
-            label13.Size = new Size(137, 20);
-            label13.TabIndex = 31;
-            label13.Text = "Player ID to Delete:";
+            btnAdmin.Location = new Point(710, 680);
+            btnAdmin.Name = "btnAdmin";
+            btnAdmin.Size = new Size(120, 40);
+            btnAdmin.TabIndex = 8;
+            btnAdmin.Text = "Admin Panel";
+            btnAdmin.UseVisualStyleBackColor = true;
+            btnAdmin.Click += btnAdmin_Click;
             // 
             // GameForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(914, 600);
-            Controls.Add(label13);
-            Controls.Add(txtPlayerIdToDelete);
-            Controls.Add(btnDeleteAccount);
-            Controls.Add(btnPlaceItem);
-            Controls.Add(txtPlaceQty);
-            Controls.Add(label12);
-            Controls.Add(label11);
-            Controls.Add(txtPlaceItemId);
-            Controls.Add(txtPlaceTileId);
-            Controls.Add(label10);
-            Controls.Add(btnResetBoard);
-            Controls.Add(txtHeight);
-            Controls.Add(txtWidth);
-            Controls.Add(txtResetGameId);
-            Controls.Add(label9);
-            Controls.Add(label8);
-            Controls.Add(label7);
-            Controls.Add(btnPickup);
-            Controls.Add(txtQuantity);
-            Controls.Add(label6);
-            Controls.Add(txtItemId);
-            Controls.Add(label5);
+            ClientSize = new Size(984, 741);
             Controls.Add(btnAdmin);
-            Controls.Add(btnAddScore);
-            Controls.Add(label4);
-            Controls.Add(txtDelta);
-            Controls.Add(btnMove);
-            Controls.Add(txtTargetTileId);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(txtPlayerGameId);
-            Controls.Add(label1);
-            Margin = new Padding(3, 4, 3, 4);
+            Controls.Add(btnDeleteAccount);
+            Controls.Add(lblStatus);
+            Controls.Add(btnLeaveGame);
+            Controls.Add(btnRefresh);
+            Controls.Add(grpInventory);
+            Controls.Add(grpCurrentTile);
+            Controls.Add(grpPlayerInfo);
+            Controls.Add(pnlGameBoard);
             Name = "GameForm";
-            Text = "GameForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "The Raze - Game Board";
+            Load += GameForm_Load;
+            grpPlayerInfo.ResumeLayout(false);
+            grpPlayerInfo.PerformLayout();
+            grpCurrentTile.ResumeLayout(false);
+            grpCurrentTile.PerformLayout();
+            grpInventory.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Label label1;
-        private TextBox txtPlayerGameId;
-        private Label label2;
-        private Label label3;
-        private TextBox txtTargetTileId;
-        private Button btnMove;
-        private TextBox txtDelta;
-        private Label label4;
-        private Button btnAddScore;
-        private Button btnAdmin;
-        private Label label5;
-        private TextBox txtItemId;
-        private TextBox txtQuantity;
-        private Label label6;
-        private Button btnPickup;
-        private Label label7;
-        private Label label8;
-        private Label label9;
-        private TextBox txtResetGameId;
-        private TextBox txtWidth;
-        private TextBox txtHeight;
-        private Button btnResetBoard;
-        private Label label10;
-        private TextBox txtPlaceTileId;
-        private TextBox txtPlaceItemId;
-        private Label label11;
-        private Label label12;
-        private TextBox txtPlaceQty;
-        private Button btnPlaceItem;
+        private Panel pnlGameBoard;
+        private GroupBox grpPlayerInfo;
+        private Label lblPlayerName;
+        private Label lblScore;
+        private Label lblHP;
+        private Label lblPosition;
+        private CheckBox chkIsYourTurn;
+        private GroupBox grpCurrentTile;
+        private Label lblTileInfo;
+        private ListBox lstTileItems;
+        private Button btnPickupItem;
+        private GroupBox grpInventory;
+        private ListBox lstInventory;
+        private Button btnRefresh;
+        private Button btnLeaveGame;
+        private Label lblStatus;
         private Button btnDeleteAccount;
-        private TextBox txtPlayerIdToDelete;
-        private Label label13;
+        private Button btnAdmin;
     }
 }

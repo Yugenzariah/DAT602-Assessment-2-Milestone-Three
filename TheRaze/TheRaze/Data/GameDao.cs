@@ -11,20 +11,38 @@ namespace TheRaze.Data
         /// </summary>
         public (string status, string message) MovePlayer(uint playerGameId, uint targetTileId)
         {
-            using var cn = Db.GetOpenConnection();
-            using var cmd = new MySqlCommand("store_procedure_move_player", cn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@p_playerGameId", playerGameId);
-            cmd.Parameters.AddWithValue("@p_targetTileId", targetTileId);
-
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                return (reader["Status"].ToString(), reader["Message"].ToString());
-            }
+                using var cn = Db.GetOpenConnection();
+                using var cmd = new MySqlCommand("store_procedure_move_player", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-            return ("ERROR", "No response from database");
+                cmd.Parameters.AddWithValue("@p_playerGameId", playerGameId);
+                cmd.Parameters.AddWithValue("@p_targetTileId", targetTileId);
+
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    return (reader["Status"].ToString(), reader["Message"].ToString());
+                }
+
+                return ("ERROR", "No response from database");
+            }
+            catch (MySqlException ex)
+            {
+                // Database-specific errors (connection, deadlock, etc.)
+                return ("ERROR", $"Database error: {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Connection or command execution errors
+                return ("ERROR", $"Connection error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Any other unexpected errors
+                return ("ERROR", $"Unexpected error moving player: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -32,30 +50,53 @@ namespace TheRaze.Data
         /// </summary>
         public (string status, string message, int? newScore) AddScore(uint playerGameId, int delta)
         {
-            using var cn = Db.GetOpenConnection();
-            using var cmd = new MySqlCommand("store_procedure_update_score", cn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@p_playerGameId", playerGameId);
-            cmd.Parameters.AddWithValue("@p_delta", delta);
-
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                string status = reader["Status"].ToString();
-                string message = reader["Message"].ToString();
-                int? newScore = null;
+                using var cn = Db.GetOpenConnection();
+                using var cmd = new MySqlCommand("store_procedure_update_score", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                // NewScore only exists when status is SUCCESS
-                if (status == "SUCCESS" && reader["NewScore"] != DBNull.Value)
+                cmd.Parameters.AddWithValue("@p_playerGameId", playerGameId);
+                cmd.Parameters.AddWithValue("@p_delta", delta);
+
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
                 {
-                    newScore = Convert.ToInt32(reader["NewScore"]);
+                    string status = reader["Status"].ToString();
+                    string message = reader["Message"].ToString();
+                    int? newScore = null;
+
+                    // NewScore only exists when status is SUCCESS
+                    if (status == "SUCCESS" && reader["NewScore"] != DBNull.Value)
+                    {
+                        newScore = Convert.ToInt32(reader["NewScore"]);
+                    }
+
+                    return (status, message, newScore);
                 }
 
-                return (status, message, newScore);
+                return ("ERROR", "No response from database", null);
             }
-
-            return ("ERROR", "No response from database", null);
+            catch (MySqlException ex)
+            {
+                // Database-specific errors (connection, serialization failure, etc.)
+                return ("ERROR", $"Database error: {ex.Message}", null);
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Connection or command execution errors
+                return ("ERROR", $"Connection error: {ex.Message}", null);
+            }
+            catch (InvalidCastException ex)
+            {
+                // Data type conversion errors
+                return ("ERROR", $"Data conversion error: {ex.Message}", null);
+            }
+            catch (Exception ex)
+            {
+                // Any other unexpected errors
+                return ("ERROR", $"Unexpected error updating score: {ex.Message}", null);
+            }
         }
 
         /// <summary>
@@ -63,21 +104,50 @@ namespace TheRaze.Data
         /// </summary>
         public (string status, string message) ResetBoard(uint gameId, int width, int height)
         {
-            using var cn = Db.GetOpenConnection();
-            using var cmd = new MySqlCommand("store_procedure_reset_board", cn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@p_gameId", gameId);
-            cmd.Parameters.AddWithValue("@p_width", width);
-            cmd.Parameters.AddWithValue("@p_height", height);
-
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                return (reader["Status"].ToString(), reader["Message"].ToString());
-            }
+                // Client-side validation before calling database
+                if (width <= 0 || width > 20)
+                {
+                    return ("ERROR", "Width must be between 1 and 20");
+                }
 
-            return ("ERROR", "No response from database");
+                if (height <= 0 || height > 20)
+                {
+                    return ("ERROR", "Height must be between 1 and 20");
+                }
+
+                using var cn = Db.GetOpenConnection();
+                using var cmd = new MySqlCommand("store_procedure_reset_board", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@p_gameId", gameId);
+                cmd.Parameters.AddWithValue("@p_width", width);
+                cmd.Parameters.AddWithValue("@p_height", height);
+
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    return (reader["Status"].ToString(), reader["Message"].ToString());
+                }
+
+                return ("ERROR", "No response from database");
+            }
+            catch (MySqlException ex)
+            {
+                // Database-specific errors (connection, foreign key constraints)
+                return ("ERROR", $"Database error: {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Connection or command execution errors
+                return ("ERROR", $"Connection error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Any other unexpected errors
+                return ("ERROR", $"Unexpected error resetting board: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -85,21 +155,45 @@ namespace TheRaze.Data
         /// </summary>
         public (string status, string message) PlaceItemOnTile(uint tileId, uint itemId, short quantity)
         {
-            using var cn = Db.GetOpenConnection();
-            using var cmd = new MySqlCommand("store_procedure_place_item_on_tile", cn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@p_tileId", tileId);
-            cmd.Parameters.AddWithValue("@p_itemId", itemId);
-            cmd.Parameters.AddWithValue("@p_qty", quantity);
-
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                return (reader["Status"].ToString(), reader["Message"].ToString());
-            }
+                // Client-side validation before calling database
+                if (quantity <= 0)
+                {
+                    return ("ERROR", "Quantity must be greater than zero");
+                }
 
-            return ("ERROR", "No response from database");
+                using var cn = Db.GetOpenConnection();
+                using var cmd = new MySqlCommand("store_procedure_place_item_on_tile", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@p_tileId", tileId);
+                cmd.Parameters.AddWithValue("@p_itemId", itemId);
+                cmd.Parameters.AddWithValue("@p_qty", quantity);
+
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    return (reader["Status"].ToString(), reader["Message"].ToString());
+                }
+
+                return ("ERROR", "No response from database");
+            }
+            catch (MySqlException ex)
+            {
+                // Database-specific errors (connection, constraint violations, etc.)
+                return ("ERROR", $"Database error: {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Connection or command execution errors
+                return ("ERROR", $"Connection error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Any other unexpected errors
+                return ("ERROR", $"Unexpected error placing item: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -107,21 +201,45 @@ namespace TheRaze.Data
         /// </summary>
         public (string status, string message) PickupItem(uint playerGameId, uint itemId, short quantity)
         {
-            using var cn = Db.GetOpenConnection();
-            using var cmd = new MySqlCommand("store_procedure_pickup_item", cn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@p_playerGameId", playerGameId);
-            cmd.Parameters.AddWithValue("@p_itemId", itemId);
-            cmd.Parameters.AddWithValue("@p_qty", quantity);
-
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                return (reader["Status"].ToString(), reader["Message"].ToString());
-            }
+                // Client-side validation before calling database
+                if (quantity <= 0)
+                {
+                    return ("ERROR", "Quantity must be greater than zero");
+                }
 
-            return ("ERROR", "No response from database");
+                using var cn = Db.GetOpenConnection();
+                using var cmd = new MySqlCommand("store_procedure_pickup_item", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@p_playerGameId", playerGameId);
+                cmd.Parameters.AddWithValue("@p_itemId", itemId);
+                cmd.Parameters.AddWithValue("@p_qty", quantity);
+
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    return (reader["Status"].ToString(), reader["Message"].ToString());
+                }
+
+                return ("ERROR", "No response from database");
+            }
+            catch (MySqlException ex)
+            {
+                // Database-specific errors (connection, serialization errors, etc.)
+                return ("ERROR", $"Database error: {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Connection or command execution errors
+                return ("ERROR", $"Connection error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Any other unexpected errors
+                return ("ERROR", $"Unexpected error picking up item: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -129,20 +247,38 @@ namespace TheRaze.Data
         /// </summary>
         public (string status, string message) MoveTileItem(uint tileItemId, uint targetTileId)
         {
-            using var cn = Db.GetOpenConnection();
-            using var cmd = new MySqlCommand("store_procedure_move_tile_item", cn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@p_tileItemId", tileItemId);
-            cmd.Parameters.AddWithValue("@p_targetTileId", targetTileId);
-
-            using var reader = cmd.ExecuteReader();
-            if (reader.Read())
+            try
             {
-                return (reader["Status"].ToString(), reader["Message"].ToString());
-            }
+                using var cn = Db.GetOpenConnection();
+                using var cmd = new MySqlCommand("store_procedure_move_tile_item", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-            return ("ERROR", "No response from database");
+                cmd.Parameters.AddWithValue("@p_tileItemId", tileItemId);
+                cmd.Parameters.AddWithValue("@p_targetTileId", targetTileId);
+
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    return (reader["Status"].ToString(), reader["Message"].ToString());
+                }
+
+                return ("ERROR", "No response from database");
+            }
+            catch (MySqlException ex)
+            {
+                // Database-specific errors (connection, deadlock, etc.)
+                return ("ERROR", $"Database error: {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Connection or command execution errors
+                return ("ERROR", $"Connection error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Any other unexpected errors
+                return ("ERROR", $"Unexpected error moving item: {ex.Message}");
+            }
         }
     }
 }

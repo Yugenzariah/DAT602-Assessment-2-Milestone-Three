@@ -48,7 +48,7 @@ A multiplayer turn-based survival game database application demonstrating compre
 
 ### Database Setup
 1. Open MySQL Workbench
-2. Run `DAT602-Assessment-One-M1-SQL-Script.sql` to create database and tables
+2. Run `DAT602-Assessment-One-M3-SQL-Script.sql` to create database and tables
 3. Sample data will be automatically inserted (3 players, 1 game, 4 items)
 
 ### Application Setup
